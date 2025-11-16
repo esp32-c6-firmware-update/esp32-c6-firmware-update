@@ -1,0 +1,17 @@
+{
+  "name": "C6 coprocessor update",
+  "version": "2.0.17",
+  "new_install_prompt_erase": false,
+  "new_install_improv_wait_time": 0,
+  "builds": [
+    {
+      "chipFamily": "ESP32-C6",
+      "parts": [
+        { "path": "bootloader_c6_2_0_17.bin", "offset": 0 },
+        { "path": "partition-table_c6_2_0_17.bin", "offset": 32768 },
+        { "path": "ota_data_initial_c6_2_0_17.bin", "offset": 53248 },
+		{ "path": "network_adapter_2_0_17.bin", "offset": 65536 }
+      ]
+    }
+  ]
+}
