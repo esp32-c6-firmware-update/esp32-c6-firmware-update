@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="copyright" content="&copy; 2025 Wladislaw Waag" />
+  <title>ESP32-C6 firmware installation</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  <style>
+  a { color: #0000EE; cursor: pointer; text-decoration: underline;}
+  </style>
+  <script
+    type="module"
+    src="https://unpkg.com/esp-web-tools@10.1.1/dist/web/install-button.js?module"
+  ></script>
+</head>
+<body>
+<div class="container m-2 p-0">
+  <h3><b>ESP32-C6 firmware update</b></h3>
+  <div class="form-floating mb-1">
+  <select id="lang" onchange="LangChanged();" class="form-select" aria-label="" style="min-width: 200px; width:auto;">
+        <option value="0">Deutsch</option>
+        <option value="1">English</option>
+  </select>
+  <label for="lang">Language/Sprache:</label>
+  </div>
+  <div> <h5 id="L21a">Es sind zwei Update Methoden verfügbar</h5>
+  <ol>
+	<li><span id="L21_01">Via ESP32-P4 USB/UART port ("OTA update"). Der Vorteil dieser Option ist, dass man keine USB/UART Verbindung mit dem ESP32-C6 Coprozessor direkt braucht, da diese oft nicht direkt bzw. nur mit einem Adapter verfügbar ist. Dabei wird ESP32-P4 mit einer Software geflasht, die dann automatisch ESP32-C6 Coprozessor updatet. ESP32-C6 muss dabei bereits eine lauffähige Firmware haben. im Auslieferzustand ist diese oft 0.0.6 Version.</li>
+	<li><span id="L21_02">Direkt via ESP32-C6 USB/UART. Diese Option ist oft nur mit einem Adapter möglich, da ESP32-C6 USB/UART auf meisten Boards, wo ESP32-C6 als Coprozessor verwendet wird, nicht direkt verfügbar ist. Dabei wird ESP32-C6 direkt geflasht. Der Vorteil ist, dass es immer funktioniert, unabhängig davon ob ESP32-C6 bereits eine lauffähige Firmware hat oder nicht. Damit es funktioniert, darf beim Hauptcontroller ESP32-P4 keine Software im Flash vorhanden sein, die mit ESP32-C6 kommunitieren könnte (also am besten davor Flash komplett löschen).</li>
+  </ol>
+</div>
+  <small><div id="L21">Diese Software wird kostenfrei zur Verfügung gestellt. Es werden keine bestimmten Eigenschaften der Software zugesichert. Der Inhaber dieser Webseite haftet nur für Vorsatz und grobe Fahrlässigkeit. Gewährleistungspflichten treffen ihn nur, wenn er Mängel der Software arglistig verschwiegen hat. Wenn ein anderes Recht als Deutsches angewendet wird, es gelten die Bestimmungen der englischen Version (bitte oben englische Sprache wählen). 
+</div></small>
+<br>
+  <div id="FullContainer1">
+		
+	<h5 id="L23">Vorgehensweise:</h5>
+      <ol>
+          <li><span id="L01">Schliessen Sie Ihr ESP32-P4 Board an USB an (bei Methode 1 an ESP32-P4 USB/UART, bei Methode 2 an ESP32-C6 USB/UART mit ggf. einem Adapter).</span></li>
+          <div></div>
+          <li><span id="L02">Wählen Sie die Software Version aus</span></li>
+          <div></div>
+          <li><span id="L03">Klicken Sie auf "Installieren" und wählen dann den korrekten COM-Port aus. </span><u><a onclick="NoComPortHelp()" class="btn btn-secondary btn-sm"><span id="L04">Kein Board wurde gefunden?</span></a></u></li>
+          <div id="comporthelp"></div>
+          <li><span id="L05">Klicken Sie auf "Install". Die Installation beginnt. Nach der Installation klicken Sie auf "Next"</span></li>
+		  <li><span id="L06">Optional bei der OTA Update via ESP32-P4 Controller: Um das Ergebnis zu prüfen, klicken Sie auf "Logs & Console". Warten Sie bis die Zeile "main_task: Returned from app_main()" erscheint. Klicken Sie dann auf "Reset Device". Warten Sie wieder bis die Zeile "main_task: Returned from app_main()" erscheint. Wenn alles korrekt gelaufen ist, muss direkt davor Zeile "host_performs_slave_ota: Slave version equal to the target version. No update required!" stehen.</span></li>
+      </ol>
+	</div>
+		  <div class="form-floating">
+			<select id="software_version" onchange="selectSoftware();" class="form-select" aria-label="" style="min-width: 20em; width:auto;">
+				<optgroup label="Method 1: via ESP32-P4 USB/UART port ('OTA update')">
+				<option data-manifest_file="./data/manifest_slave_update_2_0_17.json" data-download_file="./data/network_adapter_2_0_17.bin">Update ESP32-C6 firmware to 2.0.17 version (recommended)</option>
+				<optgroup label="Method 2: directly via ESP32-C6 USB/UART port if available">
+				<option data-manifest_file="./data/manifest_C6direct_update_2_0_17.json" data-download_file="./data/network_adapter_2_0_17.bin">Update ESP32-C6 firmware to 2.0.17 version (recommended)</option>
+				<option data-manifest_file="./data/manifest_erase_flash_P4.json" data-download_file="">Erase ESP32-P4 flash</option>
+			</select>
+				<label for="software_version"><span id="L11">Board Typ / SW Version:</span></label>
+		  </div>  
+	<div id="FullContainer2">
+		<br>
+	  <div class="container inst-button">
+          <esp-web-install-button id="install_btn" manifest="/cangw/manifest.json" >
+            <button class="btn btn-primary" slot="activate"><span id="L09">Installieren</span></button>
+          </esp-web-install-button>
+      </div>
+    </div>
+	<div id="FullContainer3">
+		<br>
+		<div class="container download-button">
+	      <a href="" class="btn btn-primary" id="download_btn"><span id="L24">Nur die .bin Datei herunterladen</span></a>
+	    </div>
+	    <br>
+    </div>
+  <hr>
+   <div class="accordion accordion-flush" id="accordionBottom">
+		<div class="accordion-item">
+			<h4 class="accordion-header" id="headingImprint">
+			  <button class="accordion-button collapsed" style="padding-left:0;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseImprint" aria-expanded="true" aria-controls="collapseOne">
+				<span id="L18" style="color:blue;text-decoration: underline;">Impressum</span>
+			  </button>
+			</h4>
+			<div id="collapseImprint" class="accordion-collapse collapse" aria-labelledby="headingImprint" data-bs-parent="#accordionBottom">
+			  <div class="accordion-body">
+				<small><div id="imprint"></div></small>
+			  </div>
+			</div>
+		</div>
+		
+		<div class="accordion-item">
+			<h4 class="accordion-header" id="headingPrivacy">
+			  <button class="accordion-button collapsed" style="padding-left:0;" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrivacy" aria-expanded="true" aria-controls="collapseOne">
+				<span id="L19" style="color:blue;text-decoration: underline;">Datenschutzerklärung</span>
+			  </button>
+			</h4>
+			<div id="collapsePrivacy" class="accordion-collapse collapse" aria-labelledby="headingPrivacy" data-bs-parent="#accordionBottom">
+			  <div class="accordion-body">
+				<small><div id="dataprivacy"></div></small>
+			  </div>
+			</div>
+		</div>
+	  </div>
+</div>
+<script>
+function LangChanged() {
+    if(document.getElementById('lang').selectedIndex==0) {
+        if(document.getElementById('L10')) document.getElementById('L10').innerHTML = "Leider wird Ihr Browser aktuell für die Installation via USB nicht unterstützt! Sie können nur die .bin Dateien herunterladen. <br>Bitte versuchen Sie mit Google Chrome (für Desktop) oder Microsoft Edge.<br><br>Verfügbare software Versionen:";
+        if(document.getElementById('L01')) document.getElementById('L01').innerHTML = "Schliessen Sie Ihr ESP32-P4 Board an USB an (bei Methode 1 an ESP32-P4 USB/UART, bei Methode 2 an ESP32-C6 USB/UART mit ggf. einem Adapter).";
+        if(document.getElementById('L02')) document.getElementById('L02').innerHTML = "Wählen Sie die SW Version aus.";
+        if(document.getElementById('L03')) document.getElementById('L03').innerHTML = "Klicken Sie auf \"Installieren\" und wählen dann den korrekten COM-Port aus. ";
+        if(document.getElementById('L04')) document.getElementById('L04').innerHTML = "Kein Board wurde gefunden?";
+        if(document.getElementById('L05')) document.getElementById('L05').innerHTML = "Klicken Sie auf \"Install\". Die Installation beginnt. Nach der Installation klicken Sie auf \"Next\"";
+		if(document.getElementById('L06')) document.getElementById('L06').innerHTML = "Optional bei der OTA Update via ESP32-P4 Controller: Um das Ergebnis zu prüfen, klicken Sie auf \"Logs & Console\". Warten Sie bis die Zeile \"main_task: Returned from app_main()\" erscheint. Klicken Sie dann auf \"Reset Device\". Warten Sie wieder bis die Zeile \"main_task: Returned from app_main()\" erscheint. Wenn alles korrekt gelaufen ist, muss direkt davor Zeile \"host_performs_slave_ota: Slave version equal to the target version. No update required!\" stehen.";
+        if(document.getElementById('L09')) document.getElementById('L09').innerHTML = "Installieren";
+        if(document.getElementById('L11')) document.getElementById('L11').innerHTML = "SW Version: ";
+        if(document.getElementById('L18')) document.getElementById('L18').innerHTML = 'Impressum';
+        if(document.getElementById('L19')) document.getElementById('L19').innerHTML = 'Datenschutzerklärung';
+		if(document.getElementById('L21')) document.getElementById('L21').innerHTML = 'Diese Software ist open source und wird kostenfrei zur Verfügung gestellt. Es werden keine bestimmten Eigenschaften der Software zugesichert. Der Inhaber dieser Webseite haftet nur für Vorsatz und grobe Fahrlässigkeit. Gewährleistungspflichten treffen ihn nur, wenn er Mängel der Software arglistig verschwiegen hat. Wenn ein anderes Recht als Deutsches angewendet wird, es gelten die Bestimmungen der englischen Version (bitte oben englische Sprache wählen).';
+		if(document.getElementById('L21a')) document.getElementById('L21a').innerHTML = "Es sind zwei Update Methoden verfügbar";
+		if(document.getElementById('L21_01')) document.getElementById('L21_01').innerHTML ='Via ESP32-P4 USB/UART port ("OTA update"). Der Vorteil dieser Option ist, dass man keine USB/UART Verbindung mit dem ESP32-C6 Coprozessor direkt braucht, da diese oft nicht direkt bzw. nur mit einem Adapter verfügbar ist. Dabei wird ESP32-P4 mit einer Software geflasht, die dann automatisch ESP32-C6 Coprozessor updatet. ESP32-C6 muss dabei bereits eine lauffähige Firmware haben. im Auslieferzustand ist diese oft 0.0.6 Version.';
+		if(document.getElementById('L21_02')) document.getElementById('L21_02').innerHTML ='Direkt via ESP32-C6 USB/UART. Diese Option ist oft nur mit einem Adapter möglich, da ESP32-C6 USB/UART auf meisten Boards, wo ESP32-C6 als Coprozessor verwendet wird, nicht direkt verfügbar ist. Dabei wird ESP32-C6 direkt geflasht. Der Vorteil ist, dass es immer funktioniert, unabhängig davon ob ESP32-C6 bereits eine lauffähige Firmware hat oder nicht. Damit es funktioniert, darf beim Hauptcontroller ESP32-P4 keine Software im Flash vorhanden sein, die mit ESP32-C6 kommunitieren könnte (also am besten davor Flash komplett löschen).';
+		if(document.getElementById('L23')) document.getElementById('L23').innerHTML = 'Vorgehensweise:';
+		if(document.getElementById('L24')) document.getElementById('L24').innerHTML = 'Nur die .bin Datei herunterladen';
+	
+    } else {
+        if(document.getElementById('L10')) document.getElementById('L10').innerHTML = "Unfortunately your browser is not yet supported for installation via USB! You can only download .bin files. <br>Please try on Chrome (for Desktop) or Microsoft Edge.<br><br>Available software versions:";
+        if(document.getElementById('L01')) document.getElementById('L01').innerHTML = "Connect your ESP32-P4 board to USB (for method 1 to ESP32-P4 USB/UART, for method 2 to ESP32-C6 USB/UART with an adapter if necessary).";
+        if(document.getElementById('L02')) document.getElementById('L02').innerHTML = "Select software version required.";
+        if(document.getElementById('L03')) document.getElementById('L03').innerHTML = "Click on \"Install\" and select the correct COM port. ";
+        if(document.getElementById('L04')) document.getElementById('L04').innerHTML = "No board found?";
+        if(document.getElementById('L05')) document.getElementById('L05').innerHTML = "Click on \"Install\". The installation will begin. After installation, click \"Next\".";
+		if(document.getElementById('L06')) document.getElementById('L06').innerHTML = 'Optional for OTA updates via ESP32-P4 controllers: To check the result, click on \"Logs & Console\". Wait until the line \"main_task: Returned from app_main()\" appears. Then click on \"Reset Device\". Wait again until the line \"main_task: Returned from app_main()\" appears. If everything went correctly, the line \"host_performs_slave_ota: Slave version equal to the target version. No update required!\" should appear directly before this.';
+        if(document.getElementById('L09')) document.getElementById('L09').innerHTML = "Install";
+        if(document.getElementById('L11')) document.getElementById('L11').innerHTML = "Software version: ";
+        if(document.getElementById('L18')) document.getElementById('L18').innerHTML = 'Legal notice';
+        if(document.getElementById('L19')) document.getElementById('L19').innerHTML = 'Data privacy';
+		if(document.getElementById('L21')) document.getElementById('L21').innerHTML = 'This is open source software and is provided for free. It is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the owner of this web page be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software. In case German law should be applied, the German version of this disclaimer must be used (please select German language above).';
+		if(document.getElementById('L21a')) document.getElementById('L21a').innerHTML ="Two update methods are available";
+		if(document.getElementById('L21_01')) document.getElementById('L21_01').innerHTML ='Via ESP32-P4 USB/UART port ("OTA update"). The advantage of this option is that a direct USB/UART connection to the ESP32-C6 coprocessor is not required, as this is often not directly available or only accessible via an adapter. The ESP32-P4 is flashed with software that then automatically updates the ESP32-C6 coprocessor. The ESP32-C6 must already have working firmware; in its factory state, this is often version 0.0.6.';
+		if(document.getElementById('L21_02')) document.getElementById('L21_02').innerHTML ="Directly via ESP32-C6 USB/UART. This option often requires an adapter, as ESP32-C6 USB/UART is not directly available on most boards where the ESP32-C6 is used as a coprocessor. In this case, the ESP32-C6 is flashed directly. The advantage is that it always works, regardless of whether the ESP32-C6 already has working firmware or not. For it to work, however, the main controller ESP32-P4 must not have any software in its flash memory that could communicate with the ESP32-C6 (so it's best to completely erase the flash memory beforehand).";
+		
+		if(document.getElementById('L23')) document.getElementById('L23').innerHTML = 'Steps:';
+		if(document.getElementById('L24')) document.getElementById('L24').innerHTML = 'Only download .bin file';
+    }
+	ShowImprint();
+	ShowDataPrivacy();
+}
+
+function selectSoftware(triggeredbycheck=0) {
+    var selected = document.getElementById('software_version');
+    var manifest_file = selected.options[selected.selectedIndex].dataset.manifest_file;
+	
+	if(document.getElementById('install_btn')) document.getElementById('install_btn').setAttribute('manifest',manifest_file);
+	
+	var download_file = selected.options[selected.selectedIndex].dataset.download_file;
+	document.getElementById('download_btn').setAttribute('href',download_file);
+	
+	  document.getElementById('FullContainer3').style.display="block";
+	  document.getElementById('FullContainer2').style.display="block";
+}
+  
+function ShowImprint() {
+    if(document.getElementById('lang').selectedIndex==0) {
+        document.getElementById('imprint').innerHTML = "<br><h3>Impressum</h3>Angaben:<br>Verantwortlicher: Wladislaw Waag<br>Adresse: Wasserburger Landstr. 29, 81825 München, Deutschland<br>Kontakt: +49 (0) 176 47 11 5206, info@myhome-control.de<br><br>Verbraucherstreitbeilegung/Universalschlichtungsstelle: Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.";
+    } else {
+        document.getElementById('imprint').innerHTML = "<br><h3>Legal notice</h3>Information according to § 5 TMG:<br>Responsible: Wladislaw Waag<br>Address: Wasserburger Landstr. 29, 81825 Munich, Germany<br>Contact: +49 176 47 11 5206, info@myhome-control.de<br><br>Consumer dispute settlement / universal arbitration board: We are neither willing nor obliged to participate in dispute settlement proceedings before a consumer arbitration board.";
+    }
+}
+  
+function ShowDataPrivacy() {
+    if(document.getElementById('lang').selectedIndex==0) {
+        document.getElementById('dataprivacy').innerHTML = "<br><h3>Datenschutzerklärung</h3>Der Betreiber dieser Webseite (https://wled-install.github.io) sammelt und verarbeitet keinerlei personenbezogenen Daten der Nutzer dierser Webseite. Diese Seite wird jedoch im Rahmen von 'Github Pages' gehostet und betrieben. Es ist möglich und wahrscheinlich, dass Github die personenbezogenen Daten sammelt und verarbeitet. Das betrifft dann auch die Besucher der Webseite wled-installer.github.io. Ich habe aber keinerlei Einfluss darauf. Bitte lesen Sie dazu die Datenschutzerklärung von Github: <a href='https://docs.github.com/en/github/site-policy/github-privacy-statement' target='_blank'>https://docs.github.com/en/github/site-policy/github-privacy-statement</a><br><br>Unsere Webseite enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Für diese fremden Inhalte können wir keine Gewähr und keine Haftung übernehmen. Für die Inhalte der verlinkten Seiten ist immer der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren dabei nicht erkennbar. Sollten uns Rechtsverletzungen bekannt werden, werden wir die entsprechende Verlinkung umgehend entfernen.";
+    } else {
+        document.getElementById('dataprivacy').innerHTML = "<br><h3>Data privacy</h3>The operator of this website (https://wled-install.github.io) does not collect and process any personal data of the users of this website. However, this page is hosted and operated as part of 'Github Pages'. It is possible and probable that Github collects and processes personal data, which then also affects visitors of the wled-installer.github.io web page. But I have no influence on it. Please read the Github privacy statement: <a href='https://docs.github.com/en/github/site-policy/github-privacy-statement' target='_blank'>https://docs.github.com/en/github/site-policy/github-privacy-statement</a><br><br>Our website contains links to external websites over which we have no control. We cannot accept any liability for this third-party content. The respective provider or operator of the pages is always responsible for the content of the linked pages. The linked pages were checked for possible legal violations at the time of linking. Illegal content was not recognizable at that time. If we become aware of any legal violations, we will remove the relevant link immediately.";
+    }
+}
+
+function NoComPortHelp() {
+    document.getElementById('L04').innerHTML = "";
+    if(document.getElementById('lang').selectedIndex==0) {
+        document.getElementById('comporthelp').innerHTML = "Ist Dein USB Kabel geeignet für Datentransfer ?<br>Vielelicht fehlt der USB Treiber für Dein Board. Die meisten Boards verwenden einen von diesen:<br>- <a href=\"https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads\" target=\"_blank\">CP210x (quadratischer Chip)</a><br>-  <a href=\"http://www.wch-ic.com/downloads/CH341SER_EXE.html\" target=\"_blank\">CH34x (Rechteck Chip) oder CH9102x (quadratischer Chip)</a><br>";
+    } else {
+        document.getElementById('comporthelp').innerHTML = "Check if your USB cable supports data transfer.<br>Eventually you have to install the drivers for your board.<br>Here are drivers commonly used in ESP32 boards:<br>- <a href=\"https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers\" target=\"_blank\">CP210x (small square chip)</a><br>- <a href=\"http://www.wch-ic.com/downloads/CH341SER_EXE.html\" target=\"_blank\">CH34x (rectangular chip) or CH9102x (small square chip)</a><br>";
+    }
+}
+
+function NewTypesHelp() {
+    if(document.getElementById('lang').selectedIndex==0) {
+        document.getElementById('newtypeshelp').innerHTML = "- Die Unterstützung für diese neue Typen ist noch hoch experimentell<br>- Zum Flashen immer erst den zweiten Taster (nicht den Reset!) auf dem Bord drücken und halten, erst dann ins USB einstecken. Dann den Taster loslassen<br>- Nach der Istallation manuell resetten<br>- Es sind einige ESP32-C3 V1.0.0 Boards auf dem Markt, die grundsätzlich nicht funktioneiren<br>- Getestet vor allem mit Lolin ESP32-C3 mini, ESP32-S2 mini, ESP32-S3 mini<br>- Für ESP32-S3 (insbesondere NxR8) versuche ggf. die Version mit OPI FLASH<br>- ESP32-S2: wenn nicht funktioniert, versuche <a href='oldmethod.html'>oldmethod.html</a>";
+    } else {
+        document.getElementById('newtypeshelp').innerHTML = "- The support for these new types is still highly experimental<br>- For flashing, first press and hold the second button (not the reset!) on the board before plugging it into the USB. Then release the button<br>- After installation do reset manually<br>- There are some ESP32-C3 V1.0.0 boards on the market that basically dont work<br>- Tested mainly with Lolin ESP32-C3 mini, ESP32-S2 mini, ESP32-S3 mini<br>- For ESP32-S3 (especially NxR8) try the version with OPI FLASH<br>- ESP32-S2: if does not work, try <a href='oldmethod.html'>oldmethod.html</a>";
+    }
+}
+
+function InitLang() {
+    const langSelectElement = document.getElementById('lang');
+    const urlParams = new URLSearchParams(window.location.search);
+    let requestedLang = urlParams.get('lang');
+	if (!requestedLang) {
+		requestedLang=navigator.language || navigator.userLanguage;
+		requestedLang = (requestedLang.includes("de")) ? "deutsch":"english";
+	}
+    const targetIndex = Array.from(langSelectElement.options).findIndex(
+        language => language.label.toLowerCase() === requestedLang.toLowerCase()
+    );
+
+    if (targetIndex !== -1) {
+        langSelectElement.selectedIndex = targetIndex;
+    }
+}
+
+window.onload = function () {
+	InitLang();
+    if (document.getElementById('install_btn').hasAttribute('install-unsupported')) {
+        if(document.getElementById('lang').selectedIndex==0) {
+            document.getElementById('FullContainer1').innerHTML = "<span id=\"L10\">Leider wird Ihr Browser für die Installation über USB aktuell nicht unterstützt!<br>Bitte versuchen Sie mit Google Chrome (für Desktop) oder Microsoft Edge.<br><br>Verfügbare software Versionen:</span><br>";
+        } else {
+            document.getElementById('FullContainer1').innerHTML = "<span id=\"L10\">Unfortunately your browser is not yet supported for installation via USB!<br>Please try on Chrome (for Desktop) or Microsoft Edge.<br><br>Available software versions:</span><br>";
+        }
+		document.getElementById('FullContainer2').innerHTML = "";
+    }
+	selectSoftware();
+	LangChanged();
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+</body>
+</html>
